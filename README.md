@@ -29,7 +29,7 @@ Given a social media post, the task is to classify whether it is **real** or **f
 | Model | Accuracy |
 |--------|------------|
 | **LSTM (Bidirectional)** | 87.52% |
-| **Support Vector Machine (SVM) with TF-IDF** | 85.30% |
+| **Support Vector Machine (SVM) with TF-IDF** | 91.78% |
 | **DistilBERT** | 94.30% |
 | **BERT** | 94.77% |
 
