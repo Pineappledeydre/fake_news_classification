@@ -9,7 +9,7 @@ requests==2.32.3
 # PyTorch & Transformers (for BERT)
 torch==2.2.0
 transformers==4.40.0
-sentencepiece==0.1.99  # Needed for BERT tokenizer
+sentencepiece>=0.1.96
 
 # NLP Preprocessing
 nltk==3.9.1
