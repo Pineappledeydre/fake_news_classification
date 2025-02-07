@@ -52,7 +52,7 @@ Given a social media post, the task is to classify whether it is **real** or **f
 ## **How to Run the Project**
 ### **1️ Install Dependencies**
 ```
-pip install -r requirements.txt
+pip install -r requirements_all.txt
 ```
 ### **2️ Download & Load Data**
 ### **3️ Train the Model**
