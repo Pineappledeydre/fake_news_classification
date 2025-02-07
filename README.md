@@ -54,26 +54,10 @@ Given a social media post, the task is to classify whether it is **real** or **f
 ```
 pip install -r requirements.txt
 ```
-
 ### **2️ Download & Load Data**
-```
-python scripts/download_data.py
-```
-
 ### **3️ Train the Model**
-```
-python scripts/train_model.py --model bert
-```
-
 ### **4️ Evaluate the Model**
-```
-python scripts/evaluate_model.py --model bert
-```
-
 ### **5️ Predict Fake News**
-```
-python scripts/predict.py --text "Breaking news! COVID-19 is cured with lemon juice!"
-```
 
 ## **Results & Visualization**
 - **Confusion Matrix:** Helps understand misclassification.
