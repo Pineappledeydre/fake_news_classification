@@ -17,7 +17,7 @@ nltk==3.9.1
 spacy==3.7.5
 gensim==4.3.3
 wordcloud==1.9.4
-preprocessor==0.6.0
+tweet-preprocessor==0.6.0  
 
 # Data Visualization
 matplotlib==3.10.0
