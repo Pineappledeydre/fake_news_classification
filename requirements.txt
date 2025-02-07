@@ -38,3 +38,7 @@ torchdata==0.7.0
 tensorflow-hub==0.15.0
 tensorflow-text==2.15.0
 bert-score==0.3.13
+
+# Deploy
+streamlit==1.32.0
+sentencepiece==0.1.99
