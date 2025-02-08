@@ -1,13 +1,14 @@
 import streamlit as st
 import torch
-import numpy as np
-import re
-import string
-from transformers import BertTokenizer, BertModel
-from torch.utils.data import Dataset
 import torch.nn as nn
+from transformers import BertTokenizer, BertModel
+import re
+import nltk
+import gensim
+import string
+from nltk.corpus import stopwords
 
-# ========== MODEL CLASS ==========
+# Load Model
 class BertClassifier(nn.Module):
     def __init__(self, dropout=0.3):
         super(BertClassifier, self).__init__()
@@ -23,64 +24,49 @@ class BertClassifier(nn.Module):
         fc_output = self.fc(dropout_output)
         return self.sigmoid(fc_output)
 
-# ========== LOAD MODEL ==========
-@st.cache_resource
-def load_model():
-    model = BertClassifier()
-    github_url = "https://raw.githubusercontent.com/Pineappledeydre/fake_news_classification/main/models/trained_model.pth"
-    model_path = "trained_model.pth"
+# Load the trained model
+model = BertClassifier()
+model.load_state_dict(torch.load("bert_trained_model.pth", map_location=torch.device('cpu')))
+model.eval()
 
-    # Download model from GitHub
-    import urllib.request
-    urllib.request.urlretrieve(github_url, model_path)
-    
-    model.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
-    model.eval()
-    return model
-
-model = load_model()
 tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
 
-# ========== TEXT PREPROCESSING ==========
-def clean_text(text):
+# Preprocessing function
+def preprocess(text):
     text = text.lower()
-    text = re.sub(r"\[.*?\]", "", text)
-    text = re.sub(r"https?://\S+|www\.\S+", "", text)
-    text = re.sub(r"<.*?>", "", text)
-    text = re.sub(r"[%s]" % re.escape(string.punctuation), "", text)
-    text = re.sub(r"\n", " ", text)
+    text = re.sub(r'\[.*?\]', '', text)
+    text = re.sub(r'\W', ' ', text)
+    text = re.sub(r'https?://\S+|www\.\S+', '', text)
+    text = re.sub(r'<.*?>', '', text)
+    text = re.sub(r'[%s]' % re.escape(string.punctuation), '', text)
+    text = re.sub(r'\n', '', text)
     return text
 
-def encode_text(text, tokenizer, max_length=128):
-    encoding = tokenizer.encode_plus(
-        text,
-        max_length=max_length,
-        truncation=True,
-        padding="max_length",
-        return_tensors="pt",
-    )
-    return encoding["input_ids"], encoding["attention_mask"]
+# Streamlit App
+st.title("Fake News Detector with BERT")
+user_input = st.text_area("Enter a tweet:")
 
-# ========== STREAMLIT APP ==========
-st.title("Fake News Detection with BERT")
-st.write("Enter a news text, and the model will predict whether it is **real or fake**.")
-
-user_input = st.text_area("Enter News Text")
-
-if st.button("Predict"):
+if st.button("Analyze"):
     if user_input:
-        processed_input = clean_text(user_input)
-        st.write(f"**Processed Text:** {processed_input}")
-
-        input_ids, attention_mask = encode_text(processed_input, tokenizer)
-
+        cleaned_text = preprocess(user_input)
+        encoding = tokenizer.encode_plus(
+            cleaned_text,
+            max_length=128,
+            truncation=True,
+            padding='max_length',
+            return_tensors='pt'
+        )
+        
+        input_ids = encoding['input_ids']
+        attention_mask = encoding['attention_mask']
+        
         with torch.no_grad():
-            output = model(input_ids, attention_mask)
-            prediction = (output > 0.5).float().item()
-
-        if prediction == 1:
-            st.success("This is **Real News**!")
-        else:
-            st.error("This is **Fake News**!")
+            prediction = model(input_ids, attention_mask).item()
+        
+        probability_real = 1 - prediction
+        probability_fake = prediction
+        
+        st.write(f"### Probability of being Real: {probability_real:.2%}")
+        st.write(f"### Probability of being Fake: {probability_fake:.2%}")
     else:
-        st.warning("Please enter some text to analyze.")
+        st.write("Please enter a tweet to analyze.")
