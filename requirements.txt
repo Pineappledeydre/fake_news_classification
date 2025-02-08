@@ -1,4 +1,3 @@
-# Streamlit for Web App
 streamlit==1.32.0
 
 # Core Utilities
@@ -15,8 +14,11 @@ sentencepiece>=0.1.96
 nltk==3.9.1
 spacy==3.7.5
 regex==2024.11.6
-tweet-preprocessor==0.6.0  # Alternative to `preprocessor`
+tweet-preprocessor==0.6.0 
+gensim==4.3.2
 
 # Miscellaneous
 tqdm==4.67.1
 urllib3==2.3.0
+
+
